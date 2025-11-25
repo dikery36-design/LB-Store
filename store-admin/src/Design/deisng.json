@@ -1,0 +1,128 @@
+{
+  "dashboard": {
+    "theme": {
+      "colors": {
+        "background": "#F5F5F7",
+        "cardBackground": "#FFFFFF",
+        "textPrimary": "#1B1B1D",
+        "textSecondary": "#6F6F73",
+        "accent": "#4B71F0",
+        "success": "#32C370",
+        "warning": "#F9C74F",
+        "border": "#E4E4E7"
+      },
+      "radius": "14px",
+      "shadow": "0 4px 14px rgba(0,0,0,0.08)"
+    },
+
+    "layout": {
+      "sidebar": {
+        "width": "260px",
+        "background": "#FFFFFF",
+        "items": [
+          { "icon": "home", "label": "Dashboard" },
+          { "icon": "users", "label": "Mentors" },
+          { "icon": "student", "label": "Students" },
+          { "icon": "chart", "label": "Analytics" },
+          { "icon": "course", "label": "Courses" },
+          { "icon": "forum", "label": "Forum" }
+        ],
+        "ctaBox": {
+          "title": "Upgrade To Pro",
+          "buttonLabel": "Upgrade"
+        }
+      },
+
+      "topbar": {
+        "search": true,
+        "datePicker": true,
+        "profileMenu": true
+      },
+
+      "content": {
+        "statsCards": [
+          {
+            "label": "Stat Card 1",
+            "icon": "graph",
+            "value": "",
+            "change": "",
+            "background": "#1B1B1D",
+            "textColor": "#FFFFFF"
+          },
+          {
+            "label": "Stat Card 2",
+            "icon": "users",
+            "value": "",
+            "change": "",
+            "background": "#FFFFFF",
+            "textColor": "#1B1B1D"
+          },
+          {
+            "label": "Stat Card 3",
+            "icon": "user-add",
+            "value": "",
+            "change": "",
+            "background": "#FFFFFF"
+          },
+          {
+            "label": "Stat Card 4",
+            "icon": "mentor",
+            "value": "",
+            "change": "",
+            "background": "#FFFFFF"
+          }
+        ],
+
+        "charts": {
+          "revenueBarChart": {
+            "height": "260px",
+            "barRadius": "10px",
+            "grid": true,
+            "placeholderData": [10, 8, 9, 7, 6, 3]
+          },
+
+          "calendar": {
+            "currentMonth": true,
+            "highlightStyle": {
+              "background": "#1B1B1D",
+              "textColor": "#FFFFFF",
+              "radius": "10px"
+            }
+          },
+
+          "progressWidget": {
+            "label": "Community Growth",
+            "progress": 65,
+            "color": "#4B71F0"
+          }
+        },
+
+        "table": {
+          "title": "Course Purchases",
+          "columns": [
+            "Course Name",
+            "Student Name",
+            "Student ID",
+            "Amount",
+            "Status"
+          ],
+          "rowStyle": {
+            "padding": "16px",
+            "borderColor": "#E4E4E7",
+            "fontSize": "14px"
+          },
+          "badgeStyles": {
+            "paid": {
+              "background": "#E9F8EF",
+              "color": "#32C370"
+            },
+            "pending": {
+              "background": "#FFF4CC",
+              "color": "#D89E00"
+            }
+          }
+        }
+      }
+    }
+  }
+}
