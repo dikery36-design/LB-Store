@@ -86,8 +86,21 @@ router.delete('/:id', (req, res) => {
     const sql = "DELETE FROM items WHERE id = ?";
     const id = req.params.id;
 
-    db.query(sql, [id], (err, data) => {
-        if (err) return res.json(err);
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            // Check for Foreign Key Constraint fail (Error 1451) - Item is used in bills
+            if (err.errno === 1451) {
+                 return res.status(400).json({ 
+                     message: "Cannot delete this item because it is part of existing sales records." 
+                 });
+            }
+            return res.status(500).json(err);
+        }
+        
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Item not found." });
+        }
+
         return res.json({ message: "Item deleted successfully!" });
     });
 });
