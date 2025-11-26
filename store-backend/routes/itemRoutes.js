@@ -14,7 +14,13 @@ const db = mysql.createPool({
 
 // 1. GET ALL ITEMS (Fetch list for the App)
 router.get('/', (req, res) => {
-    const sql = "SELECT * FROM items";
+    // Select all item details AND a count of how many times it appears in bill_items
+    const sql = `
+        SELECT i.*, 
+        (SELECT COUNT(*) FROM bill_items bi WHERE bi.item_id = i.id) as usage_count
+        FROM items i
+    `;
+    
     db.query(sql, (err, data) => {
         if (err) return res.json(err);
         return res.json(data);

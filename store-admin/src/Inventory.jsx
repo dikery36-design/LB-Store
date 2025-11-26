@@ -289,7 +289,18 @@ export default function Inventory() {
                       ) : (
                         <div className="action-buttons">
                           <button className="action-btn edit" onClick={() => handleEditStart(item)}>Edit</button>
-                          <button className="action-btn delete" onClick={() => handleDeleteItem(item.id)}>Delete</button>
+                          {item.usage_count > 0 ? (
+                            <button 
+                              className="action-btn delete" 
+                              style={{ opacity: 0.5, cursor: 'not-allowed', backgroundColor: '#ccc' }}
+                              title="Cannot delete: Item has existing sales records"
+                              onClick={(e) => { e.preventDefault(); alert("Cannot delete this item because it has been sold previously. Deleting it would corrupt sales history."); }}
+                            >
+                              In Use
+                            </button>
+                          ) : (
+                            <button className="action-btn delete" onClick={() => handleDeleteItem(item.id)}>Delete</button>
+                          )}
                         </div>
                       )}
                     </td>
