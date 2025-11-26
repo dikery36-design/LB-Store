@@ -81,4 +81,15 @@ router.put('/:id', (req, res) => {
     });
 });
 
+// 4. DELETE ITEM (For Admin to remove stock)
+router.delete('/:id', (req, res) => {
+    const sql = "DELETE FROM items WHERE id = ?";
+    const id = req.params.id;
+
+    db.query(sql, [id], (err, data) => {
+        if (err) return res.json(err);
+        return res.json({ message: "Item deleted successfully!" });
+    });
+});
+
 module.exports = router;
