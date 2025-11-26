@@ -17,19 +17,23 @@ export default function Sales() {
   }, []);
 
   useEffect(() => {
-    const results = bills.filter(bill => 
-      bill.id.toString().includes(searchTerm) || 
-      (bill.cashier_id && bill.cashier_id.toString().includes(searchTerm))
-    );
+    const results = bills.filter(bill => {
+      const id = bill.id || bill.bill_id;
+      return (
+        (id && id.toString().includes(searchTerm)) || 
+        (bill.cashier_id && bill.cashier_id.toString().includes(searchTerm))
+      );
+    });
     setFilteredBills(results);
   }, [searchTerm, bills]);
 
   const fetchBills = async () => {
     try {
       const res = await axios.get(API_URL);
+      console.log("Bills data:", res.data);
       setBills(res.data);
       setFilteredBills(res.data);
-      const total = res.data.reduce((sum, bill) => sum + parseFloat(bill.total_amount), 0);
+      const total = res.data.reduce((sum, bill) => sum + parseFloat(bill.total_amount || 0), 0);
       setTotalRevenue(total);
     } catch (err) {
       console.error("Error fetching bills:", err);
@@ -37,6 +41,7 @@ export default function Sales() {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
     const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
@@ -44,7 +49,10 @@ export default function Sales() {
   const generatePDF = async (billId) => {
     try {
       const res = await axios.get(`${API_URL}/${billId}`);
-      const { id, created_at, total_amount, items } = res.data;
+      const data = res.data;
+      const id = data.id || data.bill_id;
+      const { created_at, total_amount, items } = data;
+      
       const doc = new jsPDF();
       
       // Header
@@ -193,20 +201,23 @@ export default function Sales() {
               </tr>
             </thead>
             <tbody>
-              {filteredBills.map((bill) => (
-                <tr key={bill.id}>
-                  <td><span className="id-badge">#{bill.id}</span></td>
-                  <td className="text-secondary">{formatDate(bill.created_at)}</td>
-                  <td className="font-medium">User {bill.cashier_id}</td>
-                  <td><span className="status-badge groceries">Paid</span></td>
-                  <td className="text-left font-bold">₹{parseFloat(bill.total_amount).toFixed(2)}</td>
-                  <td className="text-center">
-                    <button onClick={() => generatePDF(bill.id)} className="icon-btn">
-                      📥
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {filteredBills.map((bill) => {
+                const id = bill.id || bill.bill_id;
+                return (
+                  <tr key={id}>
+                    <td><span className="id-badge">#{id}</span></td>
+                    <td className="text-secondary">{formatDate(bill.created_at)}</td>
+                    <td className="font-medium">User {bill.cashier_id}</td>
+                    <td><span className="status-badge groceries">Paid</span></td>
+                    <td className="text-left font-bold">₹{parseFloat(bill.total_amount || 0).toFixed(2)}</td>
+                    <td className="text-center">
+                      <button onClick={() => generatePDF(id)} className="icon-btn">
+                        📥
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
