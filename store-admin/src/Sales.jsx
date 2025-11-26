@@ -11,6 +11,8 @@ export default function Sales() {
   const [filteredBills, setFilteredBills] = useState([]);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchBills();
@@ -28,15 +30,27 @@ export default function Sales() {
   }, [searchTerm, bills]);
 
   const fetchBills = async () => {
+    setLoading(true);
+    setError(null);
     try {
+      console.log("Fetching bills from:", API_URL);
       const res = await axios.get(API_URL);
-      console.log("Bills data:", res.data);
-      setBills(res.data);
-      setFilteredBills(res.data);
-      const total = res.data.reduce((sum, bill) => sum + parseFloat(bill.total_amount || 0), 0);
-      setTotalRevenue(total);
+      console.log("Bills data received:", res.data);
+      
+      if (Array.isArray(res.data)) {
+        setBills(res.data);
+        setFilteredBills(res.data);
+        const total = res.data.reduce((sum, bill) => sum + parseFloat(bill.total_amount || 0), 0);
+        setTotalRevenue(total);
+      } else {
+        console.error("Unexpected API response format:", res.data);
+        setError("Received invalid data format from server.");
+      }
     } catch (err) {
       console.error("Error fetching bills:", err);
+      setError("Failed to load sales history. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -178,7 +192,17 @@ export default function Sales() {
       {/* --- RECENT TRANSACTIONS TABLE --- */}
       <div className="card-panel transactions-panel">
         <div className="panel-header">
-          <h3>Transactions</h3>
+          <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+            <h3>Transactions</h3>
+            <button 
+              onClick={fetchBills} 
+              className="icon-btn" 
+              style={{backgroundColor: '#eee', fontSize: '14px', padding: '5px 10px'}}
+              disabled={loading}
+            >
+              {loading ? '↻...' : '↻ Refresh'}
+            </button>
+          </div>
           <div className="mini-search">
              <input 
                placeholder="Search Bill ID..." 
@@ -188,8 +212,17 @@ export default function Sales() {
           </div>
         </div>
 
+        {error && (
+          <div style={{padding: '20px', textAlign: 'center', color: 'red', backgroundColor: '#ffebee', borderRadius: '8px', margin: '10px 0'}}>
+            {error}
+          </div>
+        )}
+
         <div className="table-container">
-          <table className="design-table">
+          {loading && bills.length === 0 ? (
+            <div style={{padding: '40px', textAlign: 'center', color: '#666'}}>Loading transactions...</div>
+          ) : (
+            <table className="design-table">
             <thead>
               <tr>
                 <th>Bill ID</th>
